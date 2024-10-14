@@ -1,0 +1,170 @@
+<!-- Owned by Yash Jangid 
+# github_id = im-yash21
+# leetcode_id = im-yash21
+# linkeldn_id = im-yash21  -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Upload</title>
+    <style>
+        body {
+            font-family:'Courier New', Courier, monospace;
+            background-color: #f0f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        form {
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            width: 350px;
+            text-align: center;
+            position: relative; /* To position the back button */
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        #drop-area {
+            border: 2px dashed #007bff;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            margin: 20px 0;
+            transition: background-color 0.3s;
+            cursor: pointer;
+            color: #555;
+            font-size: 16px;
+        }
+
+        #drop-area.hover {
+            background-color: #e7f3ff;
+        }
+
+        label {
+            display: inline-block;
+            margin-top: 10px;
+            color: #007bff;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+            margin-top: 10px; /* Added margin for spacing */
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        p {
+            margin: 10px 0;
+            font-weight: bold;
+        }
+
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: rgb(26, 173, 178);
+            text-decoration: none;
+            text-decoration: underline;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <a href="javascript:history.back()" class="back-button">Back</a> <!-- Back button in the form -->
+        <h2>Upload Your Image</h2>
+        <input type="text" name="name" maxlength="20" placeholder="Your Name" required>
+        
+        <div id="drop-area" role="button" aria-label="Drop area for image upload">
+            <p>Drag and drop an image here or click to select one</p>
+            <input type="file" name="image" accept="image/*" id="fileElem" style="display: none;">
+            <label for="fileElem">Click to select file</label>
+        </div>
+
+        <button type="submit">Submit</button>
+        <p class="error" id="error-message" style="display:none;"></p>
+    </form>
+
+    <script>
+        const dropArea = document.getElementById('drop-area');
+        const fileInput = document.getElementById('fileElem');
+        const errorMessage = document.getElementById('error-message');
+
+        dropArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        dropArea.addEventListener('dragover', (event) => {
+            event.preventDefault();
+            dropArea.classList.add('hover');
+        });
+
+        dropArea.addEventListener('dragleave', () => {
+            dropArea.classList.remove('hover');
+        });
+
+        dropArea.addEventListener('drop', (event) => {
+            event.preventDefault();
+            dropArea.classList.remove('hover');
+            const files = event.dataTransfer.files;
+            if (files.length) {
+                handleFiles(files);
+            }
+        });
+
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length) {
+                handleFiles(fileInput.files);
+            }
+        });
+
+        function handleFiles(files) {
+            const file = files[0];
+            if (file && file.type.startsWith('image/')) {
+                dropArea.querySelector('p').textContent = file.name;
+                fileInput.files = files; 
+                errorMessage.style.display = 'none';
+            } else {
+                dropArea.querySelector('p').textContent = 'Invalid file type. Please upload an image.';
+                errorMessage.textContent = 'Please select a valid image file.';
+                errorMessage.style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>
